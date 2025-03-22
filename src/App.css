@@ -1,4 +1,4 @@
-#root {
+/* #root {
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
@@ -39,4 +39,50 @@
 
 .read-the-docs {
   color: #888;
+} */
+
+.container {
+	width: 100%;
+	display: flex;
+	justify-content: center;
+}
+
+.inputContainer {
+	display: flex;
+	width: 30%;
+	align-items: center;
+	min-width: 200px;
+	min-height: 50px;
+}
+
+.taskInput {
+	border: none;
+	border-bottom: 2px solid grey;
+	transition: 0.3s;
+	padding: 8px 8px;
+	margin-right: 16px;
+	flex-grow: 1;
+}
+
+.taskInput:focus {
+	outline: none;
+	border-bottom: 2px solid rgba(83, 147, 255, 1);
+}
+
+.taskBtn {
+	border: none;
+	color: white;
+	background-color: rgba(83, 147, 255, 1);
+	padding: 10px 40px;
+	border-radius: 8px;
+	transition: 0.3s;
+	cursor: pointer;
+}
+
+.taskBtn:hover {
+	background-color: rgb(61, 109, 190);
+}
+
+.taskBtn:focus {
+	outline: none;
 }
