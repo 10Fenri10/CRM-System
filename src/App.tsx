@@ -1,67 +1,135 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import './App.css'
-import Task from './components/task/Task'
+import TaskList from './components/TaskList'
+
+interface Task {
+	id: number
+	title: string
+	created: string
+	isDone: boolean
+}
 
 function App() {
-	type Task = {
-		id: number
-		title: string
-		completed: boolean
-	}
-
-	const [ToDos, setToDos] = useState<Task[]>([])
 	const [ToDo, setToDo] = useState<string>('')
-	// const [renderArr, serRenderArr] = useState<Task[]>(ToDos)
-	let doneTodos = ToDos.filter(todo => {
-		return todo.completed == true
+	const [ToDos, setToDos] = useState<Task[]>([])
+	const [AllToDos, setAllToDos] = useState<Task[]>([])
+	const [status, setStatus] = useState<'all' | 'completed' | 'inWork'>('all')
+	let doneTodos = AllToDos.filter(todo => {
+		return todo.isDone == true
 	})
 
-	let notDoneTodos = ToDos.filter(todo => {
-		return todo.completed !== true
+	let notDoneTodos = AllToDos.filter(todo => {
+		return todo.isDone !== true
 	})
 
-	const deleteTodo = (currentId: number) => {
-		console.log(currentId)
-		setToDos([
-			...ToDos.filter(todo => {
-				console.log(todo.id !== currentId)
-				return todo.id !== currentId
-			}),
-		])
-	}
-
-	const editTodo = (currentId: number, newValue: string) => {
-		console.log(currentId)
-		const editToDo = ToDos.find(todo => todo.id == currentId)
-		if (editToDo) {
-			editToDo.title = newValue
+	const fetchAllTasks = async () => {
+		try {
+			const response = await fetch(`https://easydev.club/api/v1/todos`)
+			const data = await response.json()
+			setAllToDos(data.data)
+		} catch (error) {
+			console.error('Ошибка загрузки задач:', error)
 		}
-		setToDos([...ToDos])
 	}
 
-	const chekedTodo = (currentId: number) => {
-		console.log(currentId)
-		const editToDo = ToDos.find(todo => todo.id == currentId)
-		if (editToDo) {
-			editToDo.completed = !editToDo.completed
+	const fetchFilteredTasks = async () => {
+		console.log('fetch')
+		try {
+			const response = await fetch(
+				`https://easydev.club/api/v1/todos?filter=${status}`
+			)
+			const data = await response.json()
+			setToDos(data.data)
+		} catch (error) {
+			console.error('Ошибка загрузки задач:', error)
 		}
-		setToDos([...ToDos])
 	}
 
-	const addTodo = async () => {
-		event?.preventDefault()
-		const ID = Date.now()
-		setToDos([...ToDos, { id: ID, title: ToDo, completed: false }])
-		setToDo('')
+	useEffect(() => {
+		fetchFilteredTasks()
+	}, [status])
+
+	useEffect(() => {
+		fetchAllTasks()
+	}, [])
+
+	const addTodo = async (event: React.FormEvent) => {
+		event.preventDefault()
+
+		let newTask = {
+			title: ToDo,
+			isDone: false,
+		}
+
+		try {
+			let response = await fetch('https://easydev.club/api/v1/todos', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json;charset=utf-8',
+				},
+				body: JSON.stringify(newTask),
+			})
+
+			if (!response.ok) {
+				throw new Error('Ошибка при добавлении задачи')
+			}
+
+			let result: Task = await response.json()
+
+			setToDos(prev => [...prev, result])
+			setAllToDos(prev => [...prev, result])
+			setToDo('')
+		} catch (error) {
+			alert(error)
+		}
 	}
 
-	const [filter, setFilter] = useState<'all' | 'completed' | 'pending'>('all')
+	const deleteTodo = async (id: number) => {
+		try {
+			let response = await fetch(`https://easydev.club/api/v1/todos/${id}`, {
+				method: 'DELETE',
+			})
 
-	const filteredTasks = ToDos.filter(task => {
-		if (filter === 'completed') return task.completed
-		if (filter === 'pending') return !task.completed
-		return true
-	})
+			if (!response.ok) {
+				throw new Error('Ошибка при удалении')
+			}
+
+			setToDos(prev => prev.filter(todo => todo.id !== id))
+			setAllToDos(prev => prev.filter(todo => todo.id !== id))
+		} catch (error) {
+			alert(error)
+		}
+	}
+
+	const editTodo = async (id: number, newText: string, isDone: boolean) => {
+		let updatedTask = {
+			title: newText,
+			isDone: isDone,
+		}
+
+		try {
+			let response = await fetch(`https://easydev.club/api/v1/todos/${id}`, {
+				method: 'PUT',
+				headers: {
+					'Content-Type': 'application/json;charset=utf-8',
+				},
+				body: JSON.stringify(updatedTask),
+			})
+
+			if (!response.ok) {
+				throw new Error('Ошибка при изменении')
+			}
+
+			setToDos(prev =>
+				prev.map(todo => (todo.id === id ? { ...todo, ...updatedTask } : todo))
+			)
+			setAllToDos(prev =>
+				prev.map(todo => (todo.id === id ? { ...todo, ...updatedTask } : todo))
+			)
+		} catch (error) {
+			alert(error)
+		}
+	}
 
 	return (
 		<>
@@ -83,40 +151,25 @@ function App() {
 				</form>
 				<div className='arrBtns'>
 					<button
-						className={filter !== 'all' ? 'arrBtn' : 'arrBtn_focus'}
-						onClick={() => setFilter('all')}
+						className={status !== 'all' ? 'arrBtn' : 'arrBtn_focus'}
+						onClick={() => setStatus('all')}
 					>
-						Все {ToDos.length}
+						Все {AllToDos.length}
 					</button>
 					<button
-						className={filter !== 'completed' ? 'arrBtn' : 'arrBtn_focus'}
-						onClick={() => setFilter('completed')}
+						className={status !== 'completed' ? 'arrBtn' : 'arrBtn_focus'}
+						onClick={() => setStatus('completed')}
 					>
 						Выполненные {doneTodos.length}
 					</button>
 					<button
-						className={filter !== 'pending' ? 'arrBtn' : 'arrBtn_focus'}
-						onClick={() => setFilter('pending')}
+						className={status !== 'inWork' ? 'arrBtn' : 'arrBtn_focus'}
+						onClick={() => setStatus('inWork')}
 					>
 						Невыполненные {notDoneTodos.length}
 					</button>
 				</div>
-
-				<div className='Todos'>
-					{filteredTasks.map(item => {
-						return (
-							<Task
-								key={item.id}
-								title={item.title}
-								id={item.id}
-								completed={item.completed}
-								deleteTodo={deleteTodo}
-								editTodo={editTodo}
-								chekedTodo={chekedTodo}
-							/>
-						)
-					})}
-				</div>
+				<TaskList tasks={ToDos} deleteTodo={deleteTodo} editTodo={editTodo} />
 			</div>
 		</>
 	)

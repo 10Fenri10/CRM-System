@@ -5,18 +5,18 @@ type TaskProps = {
 	title: string
 	id: number
 	completed: boolean
-	deleteTodo: (currentId: number) => void
-	editTodo: (currentId: number, newValue: string) => void
-	chekedTodo: (currentId: number) => void
+	created: string
+	onDelete: (id: number) => void
+	onEdit: (id: number, newText: string, isDone: boolean) => void
 }
 
 export default function Task({
 	title,
 	id,
 	completed,
-	deleteTodo,
-	editTodo,
-	chekedTodo,
+	created,
+	onDelete,
+	onEdit,
 }: TaskProps) {
 	const [isOpen, setIsOpen] = useState<boolean>(false)
 	const [inputValue, setInputValue] = useState<string>('')
@@ -30,10 +30,10 @@ export default function Task({
 							id='chekInput'
 							className='chekInput'
 							type='checkbox'
-							onChange={e => {
-								chekedTodo(id)
+							onChange={() => {
+								onEdit(id, title, !completed)
 							}}
-							checked
+							defaultChecked={true}
 						/>
 
 						<label htmlFor='chekInput'></label>
@@ -45,8 +45,8 @@ export default function Task({
 							id='chekInput'
 							className='chekInput'
 							type='checkbox'
-							onChange={e => {
-								chekedTodo(id)
+							onChange={() => {
+								onEdit(id, title, !completed)
 							}}
 						/>
 
@@ -57,13 +57,7 @@ export default function Task({
 			</div>
 
 			<div className='btns'>
-				<button
-					onClick={() => {
-						event?.preventDefault()
-						deleteTodo(id)
-					}}
-					className='trashBtn'
-				>
+				<button onClick={() => onDelete(id)} className='trashBtn'>
 					<FaRegTrashAlt
 						style={{ fontSize: '24px', backgroundColor: 'red' }}
 						color='white'
@@ -71,7 +65,6 @@ export default function Task({
 				</button>
 				<button
 					onClick={() => {
-						// editTodo(id)
 						setIsOpen(true)
 					}}
 					className='editBtn'
@@ -88,7 +81,14 @@ export default function Task({
 
 			{isOpen && (
 				<div className='overlay'>
-					<div className='popup'>
+					<form
+						onSubmit={event => {
+							event.preventDefault()
+							onEdit(id, inputValue, completed)
+							setIsOpen(false)
+						}}
+						className='popup'
+					>
 						<h2>Введите данные</h2>
 						<input
 							type='text'
@@ -96,17 +96,12 @@ export default function Task({
 							onChange={e => setInputValue(e.target.value)}
 							placeholder='Введите текст'
 						/>
-						<div className='buttons'>
-							<button
-								onClick={() => {
-									editTodo(id, inputValue)
-									setIsOpen(false)
-								}}
-							>
+						<div>
+							<button className='editBtn' type='submit'>
 								Изменить
 							</button>
 						</div>
-					</div>
+					</form>
 				</div>
 			)}
 		</div>
