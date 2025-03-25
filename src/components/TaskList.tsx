@@ -28,7 +28,6 @@ export default function TaskList({
 					title={item.title}
 					id={item.id}
 					completed={item.isDone}
-					created={item.created}
 					onDelete={deleteTodo}
 					onEdit={editTodo}
 				/>

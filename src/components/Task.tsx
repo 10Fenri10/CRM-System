@@ -5,7 +5,6 @@ type TaskProps = {
 	title: string
 	id: number
 	completed: boolean
-	created: string
 	onDelete: (id: number) => void
 	onEdit: (id: number, newText: string, isDone: boolean) => void
 }
@@ -14,7 +13,6 @@ export default function Task({
 	title,
 	id,
 	completed,
-	created,
 	onDelete,
 	onEdit,
 }: TaskProps) {
