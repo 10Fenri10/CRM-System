@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { FaRegEdit, FaRegTrashAlt } from 'react-icons/fa'
+import { FaCheck, FaRegEdit, FaRegTrashAlt } from 'react-icons/fa'
+import { ImCross } from 'react-icons/im'
 
 type TaskProps = {
 	title: string
@@ -17,7 +18,7 @@ export default function Task({
 	onEdit,
 }: TaskProps) {
 	const [isOpen, setIsOpen] = useState<boolean>(false)
-	const [inputValue, setInputValue] = useState<string>('')
+	const [inputValue, setInputValue] = useState<string>(`${title}`)
 
 	return (
 		<div className='taskContainer'>
@@ -35,7 +36,25 @@ export default function Task({
 						/>
 
 						<label htmlFor='chekInput'></label>
-						<s className='taskTitleDone'>{title}</s>
+						{isOpen ? (
+							<>
+								<input
+									className='taskInput'
+									type='text'
+									value={inputValue}
+									onChange={e => setInputValue(e.target.value)}
+									placeholder='Введите текст'
+									required
+									minLength={2}
+									maxLength={64}
+									pattern='[A-Za-zА-Яа-яЁё0-9\s]+'
+								/>
+							</>
+						) : (
+							<>
+								<s className='taskTitleDone'>{title}</s>
+							</>
+						)}
 					</>
 				) : (
 					<>
@@ -49,12 +68,90 @@ export default function Task({
 						/>
 
 						<label htmlFor='chekInput'></label>
-						<p className='taskTitle'>{title}</p>
+						{isOpen ? (
+							<>
+								<input
+									className='taskInput'
+									type='text'
+									value={inputValue}
+									onChange={e => setInputValue(e.target.value)}
+									placeholder='Введите текст'
+									required
+									minLength={2}
+									maxLength={64}
+									pattern='[A-Za-zА-Яа-яЁё0-9\s]+'
+								/>
+							</>
+						) : (
+							<>
+								<p className='taskTitle'>{title}</p>
+							</>
+						)}
 					</>
 				)}
 			</div>
 
-			<div className='btns'>
+			{isOpen ? (
+				<>
+					<div className='btns'>
+						<button
+							onClick={event => {
+								event.preventDefault()
+								onEdit(id, inputValue, completed)
+								setIsOpen(false)
+							}}
+							className='editBtn'
+						>
+							<FaCheck
+								style={{
+									fontSize: '24px',
+									backgroundColor: 'rgba(83, 147, 255, 1)',
+								}}
+								color='white'
+							/>
+						</button>
+						<button
+							onClick={event => {
+								event.preventDefault()
+								setIsOpen(false)
+							}}
+							className='trashBtn'
+						>
+							<ImCross
+								style={{ fontSize: '24px', backgroundColor: 'red' }}
+								color='white'
+							/>
+						</button>
+					</div>
+				</>
+			) : (
+				<>
+					<div className='btns'>
+						<button
+							onClick={() => {
+								setIsOpen(true)
+							}}
+							className='editBtn'
+						>
+							<FaRegEdit
+								style={{
+									fontSize: '24px',
+									backgroundColor: 'rgba(83, 147, 255, 1)',
+								}}
+								color='white'
+							/>
+						</button>
+						<button onClick={() => onDelete(id)} className='trashBtn'>
+							<FaRegTrashAlt
+								style={{ fontSize: '24px', backgroundColor: 'red' }}
+								color='white'
+							/>
+						</button>
+					</div>
+				</>
+			)}
+
+			{/* <div className='btns'>
 				<button
 					onClick={() => {
 						setIsOpen(true)
@@ -94,9 +191,9 @@ export default function Task({
 							onChange={e => setInputValue(e.target.value)}
 							placeholder='Введите текст'
 							required
-							minLength={3}
-							maxLength={20}
-							pattern='[A-Za-zА-Яа-яЁё\s]+'
+							minLength={2}
+							maxLength={64}
+							pattern='[A-Za-zА-Яа-яЁё0-9\s]+'
 						/>
 						<div>
 							<button className='editBtn' type='submit'>
@@ -105,7 +202,7 @@ export default function Task({
 						</div>
 					</form>
 				</div>
-			)}
+			)} */}
 		</div>
 	)
 }
