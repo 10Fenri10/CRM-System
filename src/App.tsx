@@ -113,9 +113,9 @@ function App() {
 		}
 
 		try {
-			if (updatedTask.title.length == 0) {
+			if (updatedTask.title.length <= 1) {
 				throw new Error(
-					'Задача не может быть пустой ;) Так мне дядя тестировщик сказал'
+					'Задача не может быть меньше 2 символов ;) Так мне дядя тестировщик сказал'
 				)
 			}
 			let response = await fetch(`https://easydev.club/api/v1/todos/${id}`, {
