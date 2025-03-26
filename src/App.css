@@ -107,7 +107,6 @@
 	border-radius: 8px;
 	transition: 0.3s;
 	cursor: pointer;
-	margin-right: 12px;
 }
 
 .trashBtn:hover {
@@ -124,6 +123,7 @@
 	border-radius: 8px;
 	transition: 0.3s;
 	cursor: pointer;
+	margin-right: 12px;
 }
 
 .editBtn:hover {

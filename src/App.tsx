@@ -62,6 +62,11 @@ function App() {
 		}
 
 		try {
+			if (newTask.title.length == 0) {
+				throw new Error(
+					'Задача не может быть пустой ;) Так мне дядя тестировщик сказал'
+				)
+			}
 			let response = await fetch('https://easydev.club/api/v1/todos', {
 				method: 'POST',
 				headers: {
@@ -108,6 +113,11 @@ function App() {
 		}
 
 		try {
+			if (updatedTask.title.length == 0) {
+				throw new Error(
+					'Задача не может быть пустой ;) Так мне дядя тестировщик сказал'
+				)
+			}
 			let response = await fetch(`https://easydev.club/api/v1/todos/${id}`, {
 				method: 'PUT',
 				headers: {
@@ -126,6 +136,7 @@ function App() {
 			setAllToDos(prev =>
 				prev.map(todo => (todo.id === id ? { ...todo, ...updatedTask } : todo))
 			)
+			fetchFilteredTasks()
 		} catch (error) {
 			alert(error)
 		}
@@ -144,6 +155,10 @@ function App() {
 						}}
 						value={ToDo}
 						className='taskInput'
+						required
+						minLength={3}
+						maxLength={25}
+						pattern='[A-Za-zА-Яа-яЁё\s]+'
 					/>
 					<button className='taskBtn' onClick={addTodo}>
 						Add
@@ -154,19 +169,19 @@ function App() {
 						className={status !== 'all' ? 'arrBtn' : 'arrBtn_focus'}
 						onClick={() => setStatus('all')}
 					>
-						Все {AllToDos.length}
-					</button>
-					<button
-						className={status !== 'completed' ? 'arrBtn' : 'arrBtn_focus'}
-						onClick={() => setStatus('completed')}
-					>
-						Выполненные {doneTodos.length}
+						Все ({AllToDos.length})
 					</button>
 					<button
 						className={status !== 'inWork' ? 'arrBtn' : 'arrBtn_focus'}
 						onClick={() => setStatus('inWork')}
 					>
-						Невыполненные {notDoneTodos.length}
+						В работе ({notDoneTodos.length})
+					</button>
+					<button
+						className={status !== 'completed' ? 'arrBtn' : 'arrBtn_focus'}
+						onClick={() => setStatus('completed')}
+					>
+						Сделано ({doneTodos.length})
 					</button>
 				</div>
 				<TaskList tasks={ToDos} deleteTodo={deleteTodo} editTodo={editTodo} />

@@ -55,12 +55,6 @@ export default function Task({
 			</div>
 
 			<div className='btns'>
-				<button onClick={() => onDelete(id)} className='trashBtn'>
-					<FaRegTrashAlt
-						style={{ fontSize: '24px', backgroundColor: 'red' }}
-						color='white'
-					/>
-				</button>
 				<button
 					onClick={() => {
 						setIsOpen(true)
@@ -72,6 +66,12 @@ export default function Task({
 							fontSize: '24px',
 							backgroundColor: 'rgba(83, 147, 255, 1)',
 						}}
+						color='white'
+					/>
+				</button>
+				<button onClick={() => onDelete(id)} className='trashBtn'>
+					<FaRegTrashAlt
+						style={{ fontSize: '24px', backgroundColor: 'red' }}
 						color='white'
 					/>
 				</button>
@@ -93,6 +93,10 @@ export default function Task({
 							value={inputValue}
 							onChange={e => setInputValue(e.target.value)}
 							placeholder='Введите текст'
+							required
+							minLength={3}
+							maxLength={20}
+							pattern='[A-Za-zА-Яа-яЁё\s]+'
 						/>
 						<div>
 							<button className='editBtn' type='submit'>
