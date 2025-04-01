@@ -1,0 +1,38 @@
+.todo_page {
+	max-width: 600px;
+	margin: 0 auto;
+	padding: 2rem;
+}
+
+.loading {
+	text-align: center;
+	padding: 2rem;
+	font-size: 1.25rem;
+	color: #6b7280;
+}
+
+.error-container {
+	text-align: center;
+	padding: 2rem;
+
+	.error {
+		color: #ef4444;
+		font-size: 1.25rem;
+		margin-bottom: 1rem;
+	}
+
+	.retry-button {
+		padding: 0.5rem 1rem;
+		background-color: #3b82f6;
+		color: white;
+		border: none;
+		border-radius: 0.5rem;
+		font-size: 1rem;
+		cursor: pointer;
+		transition: background-color 0.2s;
+
+		&:hover {
+			background-color: #2563eb;
+		}
+	}
+}
