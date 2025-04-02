@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import { todoApi } from '../../api/todoApi'
+import { getAllTodos } from '../../api/todoApi'
 import { AddTodo } from '../../components/addTodo/AddTodo'
 import { TodoFilters as TodoFiltersComponent } from '../../components/todoFilters/TodoFilters'
 import { TodoList } from '../../components/todoList/TodoList'
-import { Todo, TodoInfo } from '../../types/todo'
+import { Todo, TodoFilters, TodoInfo } from '../../types/todo'
 import styles from './TodoListPage.module.scss'
 
 export const TodoListPage: React.FC = () => {
@@ -13,7 +13,7 @@ export const TodoListPage: React.FC = () => {
 		completed: 0,
 		inWork: 0,
 	})
-	const [filter, setFilter] = useState<'all' | 'inWork' | 'completed'>('all')
+	const [filter, setFilter] = useState<TodoFilters['status']>('all')
 	const [isLoading, setIsLoading] = useState(true)
 	const [error, setError] = useState<string | null>(null)
 
@@ -22,7 +22,7 @@ export const TodoListPage: React.FC = () => {
 			setIsLoading(true)
 			setError(null)
 
-			const todosData = await todoApi.getAllTodos(filter)
+			const todosData = await getAllTodos(filter)
 			setTodos(todosData.data)
 			if (todosData.info) {
 				setStatus(todosData.info)

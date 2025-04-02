@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { todoApi } from '../../api/todoApi'
+import { addTodo } from '../../api/todoApi'
 import styles from './AddTodo.module.scss'
 
 interface AddTodoProps {
@@ -25,7 +25,7 @@ export const AddTodo: React.FC<AddTodoProps> = ({ onUpdate }) => {
 
 		try {
 			setIsSubmitting(true)
-			await todoApi.addTodo(trimedTitle)
+			await addTodo(trimedTitle)
 			setTitle('')
 			await onUpdate()
 		} catch (error) {

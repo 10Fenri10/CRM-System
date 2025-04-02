@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { FaRegEdit, FaRegTrashAlt } from 'react-icons/fa'
 import { FaCheck, FaX } from 'react-icons/fa6'
-import { todoApi } from '../../api/todoApi'
+import { deleteTodo, updateTodo } from '../../api/todoApi'
 import { Todo } from '../../types/todo'
 import styles from './TodoItem.module.scss'
 
@@ -18,7 +18,7 @@ export const TodoItem: React.FC<TodoItemProps> = ({ todo, onUpdate }) => {
 	const handleToggle = async () => {
 		try {
 			setIsDisabled(true)
-			await todoApi.updateTodo(todo.id, { isDone: !todo.isDone })
+			await updateTodo(todo.id, { isDone: !todo.isDone })
 			await onUpdate()
 		} catch (error) {
 			console.error('Error toggling todo:', error)
@@ -30,7 +30,7 @@ export const TodoItem: React.FC<TodoItemProps> = ({ todo, onUpdate }) => {
 	const handleDelete = async () => {
 		try {
 			setIsDisabled(true)
-			await todoApi.deleteTodo(todo.id)
+			await deleteTodo(todo.id)
 			await onUpdate()
 		} catch (error) {
 			console.error('Error deleting todo:', error)
@@ -41,14 +41,18 @@ export const TodoItem: React.FC<TodoItemProps> = ({ todo, onUpdate }) => {
 
 	const handleEdit = async () => {
 		const trimedTitle = editedTitle.trim()
+		if (!trimedTitle) {
+			return
+		}
 
-		if (!trimedTitle || trimedTitle.length < 2 || trimedTitle.length > 64) {
+		if (trimedTitle.length < 2 || trimedTitle.length > 64) {
+			alert('Неверное количество символов. Допустимо от 2 до 64')
 			return
 		}
 
 		try {
 			setIsDisabled(true)
-			await todoApi.updateTodo(todo.id, { title: trimedTitle })
+			await updateTodo(todo.id, { title: trimedTitle })
 			setIsEditing(false)
 			await onUpdate()
 		} catch (error) {
