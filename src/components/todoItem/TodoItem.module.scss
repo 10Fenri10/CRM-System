@@ -1,0 +1,161 @@
+@import '../../variables';
+
+.todo_item {
+	display: flex;
+	align-items: center;
+	padding: 1rem;
+	border-radius: 0.5rem;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+	transition: box-shadow 0.2s;
+
+	&:hover {
+		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+	}
+
+	.todo_content {
+		display: flex;
+		align-items: center;
+		flex: 1;
+		min-width: 0;
+
+		input[type='checkbox'] {
+			flex-shrink: 0;
+			width: 1.25rem;
+			height: 1.25rem;
+			margin-right: 1rem;
+			border: 2px solid $primary-color;
+			border-radius: 50%;
+			cursor: pointer;
+			appearance: none;
+			position: relative;
+
+			&:checked {
+				background-color: $primary-color;
+				border-color: $primary-color;
+
+				&::after {
+					content: '';
+					position: absolute;
+					top: 50%;
+					left: 50%;
+					transform: translate(-50%, -50%);
+					width: 0.5rem;
+					height: 0.5rem;
+					background-color: #fff;
+					border-radius: 50%;
+				}
+			}
+		}
+
+		.todo_title {
+			flex: 1;
+			color: #333;
+			word-break: break-word;
+			white-space: pre-wrap;
+			overflow-wrap: break-word;
+			padding-right: 1rem;
+		}
+
+		.todo_titleCompleted {
+			flex: 1;
+			color: #999;
+			word-break: break-word;
+			white-space: pre-wrap;
+			overflow-wrap: break-word;
+			padding-right: 1rem;
+			text-decoration: line-through;
+		}
+
+		.edit_form {
+			display: flex;
+			align-items: center;
+			gap: 0.5rem;
+			flex: 1;
+
+			input {
+				flex: 1;
+				padding: 0.5rem;
+				border: 2px solid $primary-color;
+				border-radius: 0.25rem;
+				font-size: 1rem;
+				word-wrap: break-word;
+				white-space: pre-wrap;
+				overflow-wrap: break-word;
+
+				&:focus {
+					outline: none;
+					border-color: $secondary-color;
+				}
+			}
+
+			button {
+				padding: 0.5rem;
+				border: none;
+				background: none;
+				cursor: pointer;
+				border-radius: 0.25rem;
+				transition: all 0.2s;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+
+				&:hover {
+					background-color: #f0f0f0;
+				}
+
+				&.save {
+					color: #22c55e;
+
+					&:hover {
+						color: #16a34a;
+					}
+
+					&:disabled {
+						color: #86efac;
+						cursor: not-allowed;
+					}
+				}
+
+				&.cancel {
+					color: #6b7280;
+
+					&:hover {
+						color: #4b5563;
+					}
+				}
+			}
+		}
+	}
+
+	.todo_actions {
+		flex-shrink: 0;
+		display: flex;
+		gap: 0.5rem;
+
+		button {
+			padding: 0.5rem;
+			border: none;
+			background: none;
+			cursor: pointer;
+			border-radius: 0.25rem;
+			transition: background-color 0.2s;
+
+			&:hover {
+				background-color: #f0f0f0;
+			}
+
+			&.edit {
+				color: $primary-color;
+			}
+
+			&.delete {
+				color: $error-color;
+			}
+
+			&:disabled {
+				opacity: 0.5;
+				cursor: not-allowed;
+			}
+		}
+	}
+}
