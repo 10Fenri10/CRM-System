@@ -1,3 +1,4 @@
+import { Button, Input, Space } from 'antd'
 import React, { useState } from 'react'
 import { addTodo } from '../../api/todoApi'
 import styles from './AddTodo.module.scss'
@@ -42,20 +43,26 @@ export const AddTodo: React.FC<AddTodoProps> = ({ onUpdate }) => {
 	return (
 		<form onSubmit={handleSubmit} className={styles.todo_form}>
 			<div className={styles.form_group}>
-				<input
-					type='text'
-					value={title}
-					onChange={handleChangeTitle}
-					placeholder='Task To Be Done...'
-					disabled={isSubmitting}
-					minLength={2}
-					maxLength={64}
-					pattern='.{2,64}'
-					autoFocus
-				/>
-				<button type='submit' disabled={isSubmitting}>
-					Add
-				</button>
+				<Space.Compact style={{ width: '100%' }}>
+					<Input
+						value={title}
+						onChange={handleChangeTitle}
+						type='text'
+						disabled={isSubmitting}
+						minLength={2}
+						maxLength={64}
+						pattern='.{2,64}'
+						placeholder='Task To Be Done...'
+						autoFocus
+					/>
+					<Button
+						disabled={isSubmitting}
+						style={{ height: '100%' }}
+						type='primary'
+					>
+						Add
+					</Button>
+				</Space.Compact>
 			</div>
 		</form>
 	)

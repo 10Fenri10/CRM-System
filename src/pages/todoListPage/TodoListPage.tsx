@@ -36,12 +36,19 @@ export const TodoListPage: React.FC = () => {
 	}
 
 	useEffect(() => {
+		console.log('fetch')
 		fetchData()
+		const fetch = setInterval(() => {
+			fetchData()
+		}, 5000)
+
+		return () => clearInterval(fetch)
 	}, [filter])
 
-	if (isLoading) {
-		return <div className={styles.loading}>Загрузка...</div>
-	}
+	//До конца не знаю стоит ли оставлять ведь часто появляетсяна экране
+	// if (isLoading) {
+	// 	return <div className={styles.loading}>Загрузка...</div>
+	// }
 
 	if (error) {
 		return (
