@@ -14,12 +14,12 @@ export const TodoListPage: React.FC = () => {
 		inWork: 0,
 	})
 	const [filter, setFilter] = useState<TodoFilters['status']>('all')
-	const [isLoading, setIsLoading] = useState(true)
+	// const [isLoading, setIsLoading] = useState(true)
 	const [error, setError] = useState<string | null>(null)
 
 	const fetchData = async () => {
 		try {
-			setIsLoading(true)
+			// setIsLoading(true)
 			setError(null)
 
 			const todosData = await getAllTodos(filter)
@@ -31,7 +31,7 @@ export const TodoListPage: React.FC = () => {
 			console.error('Error fetching data:', error)
 			setError('Ошибка при загрузке данных. Пожалуйста, попробуйте позже.')
 		} finally {
-			setIsLoading(false)
+			// setIsLoading(false)
 		}
 	}
 
