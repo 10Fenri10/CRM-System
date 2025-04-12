@@ -15,9 +15,8 @@ export const AddTodo: React.FC<AddTodoProps> = ({ onUpdate }) => {
 		e.preventDefault()
 
 		const trimedTitle = title.trim()
-		if (!trimedTitle) {
-			return
-		}
+
+		console.log(trimedTitle, trimedTitle.length)
 
 		if (trimedTitle.length < 2 || trimedTitle.length > 64) {
 			alert('Неверное количество символов. Допустимо от 2 до 64')
@@ -51,7 +50,7 @@ export const AddTodo: React.FC<AddTodoProps> = ({ onUpdate }) => {
 						disabled={isSubmitting}
 						minLength={2}
 						maxLength={64}
-						pattern='.{1,64}'
+						pattern='.{0,64}'
 						placeholder='Task To Be Done...'
 						autoFocus
 					/>
@@ -59,6 +58,7 @@ export const AddTodo: React.FC<AddTodoProps> = ({ onUpdate }) => {
 						disabled={isSubmitting}
 						style={{ height: '100%' }}
 						type='primary'
+						htmlType='submit'
 					>
 						Add
 					</Button>

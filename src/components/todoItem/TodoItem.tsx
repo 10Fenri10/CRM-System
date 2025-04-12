@@ -43,9 +43,6 @@ export const TodoItem: React.FC<TodoItemProps> = ({ todo, onUpdate }) => {
 
 	const handleEdit = async () => {
 		const trimedTitle = editedTitle.trim()
-		if (!trimedTitle) {
-			return
-		}
 
 		if (trimedTitle.length < 2 || trimedTitle.length > 64) {
 			alert('Неверное количество символов. Допустимо от 2 до 64')
