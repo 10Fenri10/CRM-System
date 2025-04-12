@@ -116,7 +116,7 @@ export const TodoItem: React.FC<TodoItemProps> = ({ todo, onUpdate }) => {
 							onKeyDown={handleKeyDown}
 							minLength={2}
 							maxLength={64}
-							pattern='.{2,64}'
+							pattern='.{1,64}'
 							disabled={isDisabled}
 							autoFocus
 						/>

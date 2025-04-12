@@ -51,7 +51,7 @@ export const AddTodo: React.FC<AddTodoProps> = ({ onUpdate }) => {
 						disabled={isSubmitting}
 						minLength={2}
 						maxLength={64}
-						pattern='.{2,64}'
+						pattern='.{1,64}'
 						placeholder='Task To Be Done...'
 						autoFocus
 					/>
