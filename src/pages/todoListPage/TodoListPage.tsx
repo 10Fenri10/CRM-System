@@ -14,12 +14,12 @@ export const TodoListPage: React.FC = () => {
 		inWork: 0,
 	})
 	const [filter, setFilter] = useState<TodoFilters['status']>('all')
-	const [isLoading, setIsLoading] = useState(true)
+	// const [isLoading, setIsLoading] = useState(true)
 	const [error, setError] = useState<string | null>(null)
 
 	const fetchData = async () => {
 		try {
-			setIsLoading(true)
+			// setIsLoading(true)
 			setError(null)
 
 			const todosData = await getAllTodos(filter)
@@ -31,17 +31,24 @@ export const TodoListPage: React.FC = () => {
 			console.error('Error fetching data:', error)
 			setError('Ошибка при загрузке данных. Пожалуйста, попробуйте позже.')
 		} finally {
-			setIsLoading(false)
+			// setIsLoading(false)
 		}
 	}
 
 	useEffect(() => {
+		console.log('fetch')
 		fetchData()
+		const fetch = setInterval(() => {
+			fetchData()
+		}, 5000)
+
+		return () => clearInterval(fetch)
 	}, [filter])
 
-	if (isLoading) {
-		return <div className={styles.loading}>Загрузка...</div>
-	}
+	//До конца не знаю стоит ли оставлять ведь часто появляетсяна экране
+	// if (isLoading) {
+	// 	return <div className={styles.loading}>Загрузка...</div>
+	// }
 
 	if (error) {
 		return (

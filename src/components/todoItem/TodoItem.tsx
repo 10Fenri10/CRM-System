@@ -1,3 +1,5 @@
+import { Button, Checkbox } from 'antd'
+import Input from 'antd/es/input/Input'
 import React, { useState } from 'react'
 import { FaRegEdit, FaRegTrashAlt } from 'react-icons/fa'
 import { FaCheck, FaX } from 'react-icons/fa6'
@@ -41,9 +43,6 @@ export const TodoItem: React.FC<TodoItemProps> = ({ todo, onUpdate }) => {
 
 	const handleEdit = async () => {
 		const trimedTitle = editedTitle.trim()
-		if (!trimedTitle) {
-			return
-		}
 
 		if (trimedTitle.length < 2 || trimedTitle.length > 64) {
 			alert('Неверное количество символов. Допустимо от 2 до 64')
@@ -76,38 +75,62 @@ export const TodoItem: React.FC<TodoItemProps> = ({ todo, onUpdate }) => {
 		if (e.key === 'Escape') handleCancelEdit()
 	}
 
+	// <Space.Compact style={{ width: '100%' }}>
+	// 				<Input
+	// 					value={title}
+	// 					onChange={handleChangeTitle}
+	// 					type='text'
+	// 					disabled={isSubmitting}
+	// 					minLength={2}
+	// 					maxLength={64}
+	// 					pattern='.{2,64}'
+	// 					placeholder='Task To Be Done...'
+	// 					autoFocus
+	// 				/>
+	// 				<Button
+	// 					disabled={isSubmitting}
+	// 					style={{ height: '100%' }}
+	// 					type='primary'
+	// 				>
+	// 					Add
+	// 				</Button>
+	// 			</Space.Compact>
 	return (
 		<div className={styles.todo_item}>
 			<div className={styles.todo_content}>
-				<input
-					type='checkbox'
+				<Checkbox
 					checked={todo.isDone}
 					onChange={handleToggle}
 					disabled={isDisabled}
+					style={{ paddingRight: '8px' }}
 				/>
 				{isEditing ? (
 					<form className={styles.edit_form}>
-						<input
+						<Input
 							type='text'
 							value={editedTitle}
 							onChange={handleChangeTitle}
 							onKeyDown={handleKeyDown}
 							minLength={2}
 							maxLength={64}
-							pattern='[A-Za-zА-Яа-яЁё0-9\s]+'
+							pattern='.{1,64}'
 							disabled={isDisabled}
 							autoFocus
 						/>
-						<button
+						<Button
+							variant='outlined'
 							onClick={handleEdit}
-							className={styles.save}
 							disabled={isDisabled}
 						>
 							<FaCheck size={20} />
-						</button>
-						<button onClick={handleCancelEdit} className={styles.cancel}>
+						</Button>
+						<Button
+							variant='outlined'
+							onClick={handleCancelEdit}
+							className={styles.cancel}
+						>
 							<FaX size={20} />
-						</button>
+						</Button>
 					</form>
 				) : (
 					<span
@@ -122,20 +145,20 @@ export const TodoItem: React.FC<TodoItemProps> = ({ todo, onUpdate }) => {
 			<div className={styles.todo_actions}>
 				{!isEditing && (
 					<>
-						<button
-							className={styles.edit}
+						<Button
+							variant='outlined'
 							disabled={isDisabled}
 							onClick={() => setIsEditing(true)}
 						>
 							<FaRegEdit size={20} />
-						</button>
-						<button
-							className={styles.delete}
+						</Button>
+						<Button
+							variant='outlined'
 							onClick={handleDelete}
 							disabled={isDisabled}
 						>
 							<FaRegTrashAlt size={20} />
-						</button>
+						</Button>
 					</>
 				)}
 			</div>
