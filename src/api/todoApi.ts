@@ -1,13 +1,19 @@
+import axios from 'axios'
 import { MetaResponse, Todo, TodoFilters, TodoInfo } from '../types/todo'
 
-import axios from 'axios'
-const API_BASE_URL = 'https://easydev.club/api/v1'
+const api = axios.create({
+	baseURL: 'https://easydev.club/api/v1',
+})
 
 export async function getAllTodos(
 	filter: TodoFilters['status']
 ): Promise<MetaResponse<Todo, TodoInfo>> {
 	try {
-		const response = await axios.get(`${API_BASE_URL}/todos?filter=${filter}`)
+		const response = await api.get(`/todos`, {
+			params: {
+				filter: filter,
+			},
+		})
 
 		const data = await response.data
 
@@ -21,7 +27,7 @@ export async function getAllTodos(
 
 export async function addTodo(title: string): Promise<Todo> {
 	try {
-		const response = await axios.post(`${API_BASE_URL}/todos`, {
+		const response = await api.post(`/todos`, {
 			title,
 			isDone: false,
 		})
@@ -38,7 +44,7 @@ export async function updateTodo(
 	updates: Partial<Todo>
 ): Promise<Todo> {
 	try {
-		const response = await axios.put(`${API_BASE_URL}/todos/${id}`, updates)
+		const response = await api.put(`/todos/${id}`, updates)
 		return response.data
 	} catch (error) {
 		console.error('Error updating todo:', error)
@@ -48,7 +54,7 @@ export async function updateTodo(
 
 export async function deleteTodo(id: number): Promise<void> {
 	try {
-		await axios.delete(`${API_BASE_URL}/todos/${id}`)
+		await api.delete(`/todos/${id}`)
 	} catch (error) {
 		console.error('Error deleting todo:', error)
 		throw error
