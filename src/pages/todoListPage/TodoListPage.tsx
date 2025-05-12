@@ -1,3 +1,4 @@
+import notification from 'antd/es/notification'
 import React, { useEffect, useState } from 'react'
 import { getAllTodos } from '../../api/todoApi'
 import { AddTodo } from '../../components/addTodo/AddTodo'
@@ -17,18 +18,29 @@ export const TodoListPage: React.FC = () => {
 	// const [isLoading, setIsLoading] = useState(true)
 	const [error, setError] = useState<string | null>(null)
 
+	const [api, contextHolder] = notification.useNotification()
+
+	const openNotification = () => {
+		api.open({
+			message: 'Ошибка!',
+			description: 'Ошибка при загрузке данных. Пожалуйста, попробуйте позже',
+		})
+	}
+
 	const fetchData = async () => {
 		try {
 			// setIsLoading(true)
 			setError(null)
 
 			const todosData = await getAllTodos(filter)
-			setTodos(todosData.data)
+			setTodos(todosData.data.reverse())
+
 			if (todosData.info) {
 				setStatus(todosData.info)
 			}
 		} catch (error) {
 			console.error('Error fetching data:', error)
+			openNotification()
 			setError('Ошибка при загрузке данных. Пожалуйста, попробуйте позже.')
 		} finally {
 			// setIsLoading(false)
@@ -63,6 +75,7 @@ export const TodoListPage: React.FC = () => {
 
 	return (
 		<div className={styles.todo_page}>
+			{contextHolder}
 			<AddTodo onUpdate={fetchData} />
 			<TodoFiltersComponent
 				filter={filter}

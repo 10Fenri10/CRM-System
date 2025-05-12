@@ -1,4 +1,4 @@
-import { Button, Checkbox } from 'antd'
+import { Button, Checkbox, Form } from 'antd'
 import Input from 'antd/es/input/Input'
 import React, { useState } from 'react'
 import { FaRegEdit, FaRegTrashAlt } from 'react-icons/fa'
@@ -16,6 +16,7 @@ export const TodoItem: React.FC<TodoItemProps> = ({ todo, onUpdate }) => {
 	const [isDisabled, setIsDisabled] = useState<boolean>(false)
 	const [isEditing, setIsEditing] = useState<boolean>(false)
 	const [editedTitle, setEditedTitle] = useState<string>(todo.title)
+	const [form] = Form.useForm()
 
 	const handleToggle = async () => {
 		try {
@@ -43,11 +44,6 @@ export const TodoItem: React.FC<TodoItemProps> = ({ todo, onUpdate }) => {
 
 	const handleEdit = async () => {
 		const trimedTitle = editedTitle.trim()
-
-		if (trimedTitle.length < 2 || trimedTitle.length > 64) {
-			alert('Неверное количество символов. Допустимо от 2 до 64')
-			return
-		}
 
 		try {
 			setIsDisabled(true)
@@ -105,21 +101,40 @@ export const TodoItem: React.FC<TodoItemProps> = ({ todo, onUpdate }) => {
 					style={{ paddingRight: '8px' }}
 				/>
 				{isEditing ? (
-					<form className={styles.edit_form}>
-						<Input
-							type='text'
-							value={editedTitle}
-							onChange={handleChangeTitle}
-							onKeyDown={handleKeyDown}
-							minLength={2}
-							maxLength={64}
-							pattern='.{1,64}'
-							disabled={isDisabled}
-							autoFocus
-						/>
+					<Form form={form} onFinish={handleEdit} className={styles.edit_form}>
+						<Form.Item
+							label=''
+							name='todo'
+							style={{ flex: 1, marginBottom: 0 }}
+							rules={[
+								{ required: true, message: 'Задача не может быть пустой!' },
+								{
+									min: 2,
+									max: 64,
+									message:
+										'Задача не может быть короче 2 и длинее 64 символов!',
+								},
+								{
+									pattern: new RegExp('.{1,64}'),
+									message: 'Задача не может иметь данные символы!',
+								},
+							]}
+						>
+							<Input
+								type='text'
+								value={editedTitle}
+								defaultValue={editedTitle}
+								onChange={handleChangeTitle}
+								onKeyDown={handleKeyDown}
+								disabled={isDisabled}
+								autoFocus
+							/>
+						</Form.Item>
+
 						<Button
 							variant='outlined'
-							onClick={handleEdit}
+							// onClick={handleEdit}
+							htmlType='submit'
 							disabled={isDisabled}
 						>
 							<FaCheck size={20} />
@@ -131,7 +146,7 @@ export const TodoItem: React.FC<TodoItemProps> = ({ todo, onUpdate }) => {
 						>
 							<FaX size={20} />
 						</Button>
-					</form>
+					</Form>
 				) : (
 					<span
 						className={
@@ -165,3 +180,64 @@ export const TodoItem: React.FC<TodoItemProps> = ({ todo, onUpdate }) => {
 		</div>
 	)
 }
+
+// import React from 'react';
+// import type { FormProps } from 'antd';
+// import { Button, Checkbox, Form, Input } from 'antd';
+
+// type FieldType = {
+//   username?: string;
+//   password?: string;
+//   remember?: string;
+// };
+
+// const onFinish: FormProps<FieldType>['onFinish'] = (values) => {
+//   console.log('Success:', values);
+// };
+
+// const onFinishFailed: FormProps<FieldType>['onFinishFailed'] = (errorInfo) => {
+//   console.log('Failed:', errorInfo);
+// };
+
+// const App: React.FC = () => (
+//   <Form
+//     name="basic"
+//     labelCol={{ span: 8 }}
+//     wrapperCol={{ span: 16 }}
+//     style={{ maxWidth: 600 }}
+//     initialValues={{ remember: true }}
+//     onFinish={onFinish}
+//     onFinishFailed={onFinishFailed}
+//     autoComplete="off"
+//   >
+{
+	/* <Form.Item<FieldType>
+  label="Username"
+  name="username"
+  rules={[{ required: true, message: 'Please input your username!' }]}
+>
+  <Input />
+</Form.Item> */
+}
+
+//     <Form.Item<FieldType>
+//       label="Password"
+//       name="password"
+//       rules={[{ required: true, message: 'Please input your password!' }]}
+//     >
+//       <Input.Password />
+//     </Form.Item>
+
+//     <Form.Item<FieldType> name="remember" valuePropName="checked" label={null}>
+//       <Checkbox>Remember me</Checkbox>
+//     </Form.Item>
+
+//     <Form.Item label={null}>
+//       <Button type="primary" htmlType="submit">
+//         Submit
+//       </Button>
+//     </Form.Item>
+//   </Form>
+// );
+
+// export default App;
