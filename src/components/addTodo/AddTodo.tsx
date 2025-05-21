@@ -1,4 +1,4 @@
-import { Button, Input, Space } from 'antd'
+import { Button, Form, Input } from 'antd'
 import React, { useState } from 'react'
 import { addTodo } from '../../api/todoApi'
 import styles from './AddTodo.module.scss'
@@ -8,11 +8,11 @@ interface AddTodoProps {
 }
 
 export const AddTodo: React.FC<AddTodoProps> = ({ onUpdate }) => {
-	const [title, setTitle] = useState<string>('')
 	const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
+	const [form] = Form.useForm()
 
-	const handleSubmit = async (e: React.FormEvent) => {
-		e.preventDefault()
+	const handleSubmit = async () => {
+		const { todo: title } = await form.validateFields()
 
 		const trimedTitle = title.trim()
 
@@ -26,7 +26,7 @@ export const AddTodo: React.FC<AddTodoProps> = ({ onUpdate }) => {
 		try {
 			setIsSubmitting(true)
 			await addTodo(trimedTitle)
-			setTitle('')
+			form.resetFields()
 			await onUpdate()
 		} catch (error) {
 			console.error('Error adding todo:', error)
@@ -35,35 +35,43 @@ export const AddTodo: React.FC<AddTodoProps> = ({ onUpdate }) => {
 		}
 	}
 
-	const handleChangeTitle: React.ChangeEventHandler<HTMLInputElement> = e => {
-		setTitle(e.target.value)
-	}
-
 	return (
-		<form onSubmit={handleSubmit} className={styles.todo_form}>
+		<Form form={form} onFinish={handleSubmit} className={styles.todo_form}>
 			<div className={styles.form_group}>
-				<Space.Compact style={{ width: '100%' }}>
+				<Form.Item
+					label=''
+					name='todo'
+					style={{ flex: 1, marginBottom: 0 }}
+					rules={[
+						{ required: true, message: 'Задача не может быть пустой!' },
+						{
+							min: 2,
+							max: 64,
+							message: 'Задача не может быть короче 2 и длинее 64 символов!',
+						},
+						{
+							pattern: new RegExp('.{1,64}'),
+							message: 'Задача не может иметь данные символы!',
+						},
+					]}
+				>
 					<Input
-						value={title}
-						onChange={handleChangeTitle}
 						type='text'
 						disabled={isSubmitting}
-						minLength={2}
-						maxLength={64}
-						pattern='.{0,64}'
 						placeholder='Task To Be Done...'
 						autoFocus
 					/>
-					<Button
-						disabled={isSubmitting}
-						style={{ height: '100%' }}
-						type='primary'
-						htmlType='submit'
-					>
-						Add
-					</Button>
-				</Space.Compact>
+				</Form.Item>
+
+				<Button
+					disabled={isSubmitting}
+					style={{ height: '100%' }}
+					type='primary'
+					htmlType='submit'
+				>
+					Add
+				</Button>
 			</div>
-		</form>
+		</Form>
 	)
 }
