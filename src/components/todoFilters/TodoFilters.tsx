@@ -1,3 +1,4 @@
+import { Button } from 'antd'
 import React from 'react'
 import { TodoFilters as TodoFiltersType, TodoInfo } from '../../types/todo'
 import styles from './TodoFilters.module.scss'
@@ -15,24 +16,27 @@ export const TodoFilters: React.FC<TodoFiltersProps> = ({
 }) => {
 	return (
 		<div className={styles.todo_filters}>
-			<button
+			<Button
 				onClick={() => onFilterChange('all')}
-				className={filter === 'all' ? styles.active : ''}
+				size='large'
+				type={filter === 'all' ? 'primary' : 'default'}
 			>
 				Все<span className={styles.count}>({status.all})</span>
-			</button>
-			<button
+			</Button>
+			<Button
 				onClick={() => onFilterChange('inWork')}
-				className={filter === 'inWork' ? styles.active : ''}
+				size='large'
+				type={filter === 'inWork' ? 'primary' : 'default'}
 			>
 				В работе<span className={styles.count}>({status.inWork})</span>
-			</button>
-			<button
+			</Button>
+			<Button
 				onClick={() => onFilterChange('completed')}
-				className={filter === 'completed' ? styles.active : ''}
+				size='large'
+				type={filter === 'completed' ? 'primary' : 'default'}
 			>
 				Сделано<span className={styles.count}>({status.completed})</span>
-			</button>
+			</Button>
 		</div>
 	)
 }

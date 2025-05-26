@@ -1,7 +1,9 @@
+import { Button, Checkbox, Form } from 'antd'
+import Input from 'antd/es/input/Input'
 import React, { useState } from 'react'
 import { FaRegEdit, FaRegTrashAlt } from 'react-icons/fa'
 import { FaCheck, FaX } from 'react-icons/fa6'
-import { todoApi } from '../../api/todoApi'
+import { deleteTodo, updateTodo } from '../../api/todoApi'
 import { Todo } from '../../types/todo'
 import styles from './TodoItem.module.scss'
 
@@ -13,12 +15,13 @@ interface TodoItemProps {
 export const TodoItem: React.FC<TodoItemProps> = ({ todo, onUpdate }) => {
 	const [isDisabled, setIsDisabled] = useState<boolean>(false)
 	const [isEditing, setIsEditing] = useState<boolean>(false)
-	const [editedTitle, setEditedTitle] = useState<string>(todo.title)
+
+	const [form] = Form.useForm()
 
 	const handleToggle = async () => {
 		try {
 			setIsDisabled(true)
-			await todoApi.updateTodo(todo.id, { isDone: !todo.isDone })
+			await updateTodo(todo.id, { isDone: !todo.isDone })
 			await onUpdate()
 		} catch (error) {
 			console.error('Error toggling todo:', error)
@@ -30,7 +33,7 @@ export const TodoItem: React.FC<TodoItemProps> = ({ todo, onUpdate }) => {
 	const handleDelete = async () => {
 		try {
 			setIsDisabled(true)
-			await todoApi.deleteTodo(todo.id)
+			await deleteTodo(todo.id)
 			await onUpdate()
 		} catch (error) {
 			console.error('Error deleting todo:', error)
@@ -40,15 +43,12 @@ export const TodoItem: React.FC<TodoItemProps> = ({ todo, onUpdate }) => {
 	}
 
 	const handleEdit = async () => {
+		const { todo: editedTitle } = await form.validateFields()
 		const trimedTitle = editedTitle.trim()
-
-		if (!trimedTitle || trimedTitle.length < 2 || trimedTitle.length > 64) {
-			return
-		}
 
 		try {
 			setIsDisabled(true)
-			await todoApi.updateTodo(todo.id, { title: trimedTitle })
+			await updateTodo(todo.id, { title: trimedTitle })
 			setIsEditing(false)
 			await onUpdate()
 		} catch (error) {
@@ -60,11 +60,8 @@ export const TodoItem: React.FC<TodoItemProps> = ({ todo, onUpdate }) => {
 
 	const handleCancelEdit = () => {
 		setIsEditing(false)
-		setEditedTitle(todo.title)
-	}
 
-	const handleChangeTitle: React.ChangeEventHandler<HTMLInputElement> = e => {
-		setEditedTitle(e.target.value)
+		form.resetFields()
 	}
 
 	const handleKeyDown: React.KeyboardEventHandler<HTMLInputElement> = e => {
@@ -75,36 +72,56 @@ export const TodoItem: React.FC<TodoItemProps> = ({ todo, onUpdate }) => {
 	return (
 		<div className={styles.todo_item}>
 			<div className={styles.todo_content}>
-				<input
-					type='checkbox'
+				<Checkbox
 					checked={todo.isDone}
 					onChange={handleToggle}
 					disabled={isDisabled}
+					style={{ paddingRight: '8px' }}
 				/>
 				{isEditing ? (
-					<form className={styles.edit_form}>
-						<input
-							type='text'
-							value={editedTitle}
-							onChange={handleChangeTitle}
-							onKeyDown={handleKeyDown}
-							minLength={2}
-							maxLength={64}
-							pattern='[A-Za-zА-Яа-яЁё0-9\s]+'
-							disabled={isDisabled}
-							autoFocus
-						/>
-						<button
-							onClick={handleEdit}
-							className={styles.save}
-							disabled={isDisabled}
+					<Form
+						form={form}
+						initialValues={{ todo: todo.title }}
+						onFinish={handleEdit}
+						className={styles.edit_form}
+					>
+						<Form.Item
+							label=''
+							name='todo'
+							style={{ flex: 1, marginBottom: 0 }}
+							rules={[
+								{ required: true, message: 'Задача не может быть пустой!' },
+								{
+									min: 2,
+									max: 64,
+									message:
+										'Задача не может быть короче 2 и длинее 64 символов!',
+								},
+								{
+									pattern: new RegExp('.{1,64}'),
+									message: 'Задача не может иметь данные символы!',
+								},
+							]}
 						>
+							<Input
+								type='text'
+								onKeyDown={handleKeyDown}
+								disabled={isDisabled}
+								autoFocus
+							/>
+						</Form.Item>
+
+						<Button variant='outlined' htmlType='submit' disabled={isDisabled}>
 							<FaCheck size={20} />
-						</button>
-						<button onClick={handleCancelEdit} className={styles.cancel}>
+						</Button>
+						<Button
+							variant='outlined'
+							onClick={handleCancelEdit}
+							className={styles.cancel}
+						>
 							<FaX size={20} />
-						</button>
-					</form>
+						</Button>
+					</Form>
 				) : (
 					<span
 						className={
@@ -118,20 +135,20 @@ export const TodoItem: React.FC<TodoItemProps> = ({ todo, onUpdate }) => {
 			<div className={styles.todo_actions}>
 				{!isEditing && (
 					<>
-						<button
-							className={styles.edit}
+						<Button
+							variant='outlined'
 							disabled={isDisabled}
 							onClick={() => setIsEditing(true)}
 						>
 							<FaRegEdit size={20} />
-						</button>
-						<button
-							className={styles.delete}
+						</Button>
+						<Button
+							variant='outlined'
 							onClick={handleDelete}
 							disabled={isDisabled}
 						>
 							<FaRegTrashAlt size={20} />
-						</button>
+						</Button>
 					</>
 				)}
 			</div>

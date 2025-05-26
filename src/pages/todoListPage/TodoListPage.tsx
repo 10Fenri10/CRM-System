@@ -1,9 +1,10 @@
+import notification from 'antd/es/notification'
 import React, { useEffect, useState } from 'react'
-import { todoApi } from '../../api/todoApi'
+import { getAllTodos } from '../../api/todoApi'
 import { AddTodo } from '../../components/addTodo/AddTodo'
 import { TodoFilters as TodoFiltersComponent } from '../../components/todoFilters/TodoFilters'
 import { TodoList } from '../../components/todoList/TodoList'
-import { Todo, TodoInfo } from '../../types/todo'
+import { Todo, TodoFilters, TodoInfo } from '../../types/todo'
 import styles from './TodoListPage.module.scss'
 
 export const TodoListPage: React.FC = () => {
@@ -13,35 +14,53 @@ export const TodoListPage: React.FC = () => {
 		completed: 0,
 		inWork: 0,
 	})
-	const [filter, setFilter] = useState<'all' | 'inWork' | 'completed'>('all')
-	const [isLoading, setIsLoading] = useState(true)
+	const [filter, setFilter] = useState<TodoFilters['status']>('all')
+	// const [isLoading, setIsLoading] = useState(true)
 	const [error, setError] = useState<string | null>(null)
+
+	const [api, contextHolder] = notification.useNotification()
+
+	const openNotification = () => {
+		api.open({
+			message: 'Ошибка!',
+			description: 'Ошибка при загрузке данных. Пожалуйста, попробуйте позже',
+		})
+	}
 
 	const fetchData = async () => {
 		try {
-			setIsLoading(true)
+			// setIsLoading(true)
 			setError(null)
 
-			const todosData = await todoApi.getAllTodos(filter)
-			setTodos(todosData.data)
+			const todosData = await getAllTodos(filter)
+			setTodos(todosData.data.reverse())
+
 			if (todosData.info) {
 				setStatus(todosData.info)
 			}
 		} catch (error) {
 			console.error('Error fetching data:', error)
+			openNotification()
 			setError('Ошибка при загрузке данных. Пожалуйста, попробуйте позже.')
 		} finally {
-			setIsLoading(false)
+			// setIsLoading(false)
 		}
 	}
 
 	useEffect(() => {
+		console.log('fetch')
 		fetchData()
+		const fetch = setInterval(() => {
+			fetchData()
+		}, 5000)
+
+		return () => clearInterval(fetch)
 	}, [filter])
 
-	if (isLoading) {
-		return <div className={styles.loading}>Загрузка...</div>
-	}
+	//До конца не знаю стоит ли оставлять ведь часто появляетсяна экране
+	// if (isLoading) {
+	// 	return <div className={styles.loading}>Загрузка...</div>
+	// }
 
 	if (error) {
 		return (
@@ -56,6 +75,7 @@ export const TodoListPage: React.FC = () => {
 
 	return (
 		<div className={styles.todo_page}>
+			{contextHolder}
 			<AddTodo onUpdate={fetchData} />
 			<TodoFiltersComponent
 				filter={filter}
