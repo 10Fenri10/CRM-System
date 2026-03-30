@@ -1,38 +1,72 @@
-import { UnorderedListOutlined, UserOutlined } from '@ant-design/icons'
+import { LogoutOutlined, UnorderedListOutlined, UserOutlined } from '@ant-design/icons'
 import { Menu } from 'antd'
 import React from 'react'
-import { useNavigate } from 'react-router'
+import { useLocation, useNavigate } from 'react-router'
+import { useAuth, useAppDispatch } from '../hooks'
+import { logoutThunk } from '../store/slice/auth'
 
 const MyMenu: React.FC = () => {
+	const dispatch = useAppDispatch()
+	const { isLogged } = useAuth()
 	const navigate = useNavigate()
+	const location = useLocation()
 
 	const handleChangePage = (to: string) => {
 		navigate(to)
+	}
+
+	const selectedKeys = (() => {
+		if (!isLogged) return location.pathname === '/login' ? ['login'] : []
+		if (location.pathname === '/my-profile') return ['profile']
+		return location.pathname === '/' ? ['tasks'] : []
+	})()
+
+	const handleLogout = async () => {
+		try {
+			await dispatch(logoutThunk()).unwrap()
+		} finally {
+			navigate('/login')
+		}
 	}
 
 	return (
 		<Menu
 			theme='dark'
 			mode='inline'
-			defaultSelectedKeys={['2']}
-			items={[
-				{
-					key: '1',
-					icon: <UserOutlined />,
-					label: 'Профиль',
-					onClick: () => {
-						handleChangePage('/my-profile')
-					},
-				},
-				{
-					key: '2',
-					icon: <UnorderedListOutlined />,
-					label: 'Список задач ',
-					onClick: () => {
-						handleChangePage('/')
-					},
-				},
-			]}
+			selectedKeys={selectedKeys}
+			items={
+				isLogged
+					? [
+							{
+								key: 'profile',
+								icon: <UserOutlined />,
+								label: 'Профиль',
+								onClick: () => handleChangePage('/my-profile'),
+							},
+							{
+								key: 'tasks',
+								icon: <UnorderedListOutlined />,
+								label: 'Список задач',
+								onClick: () => handleChangePage('/'),
+							},
+							{
+								key: 'logout',
+								icon: <LogoutOutlined />,
+								label: 'Выйти',
+								onClick: () => {
+									void handleLogout()
+								},
+							},
+						]
+					: [
+							{
+								key: 'login',
+								icon: <UserOutlined />,
+								label: 'Войти',
+								onClick: () => handleChangePage('/login'),
+							},
+						]
+			}
 		/>
 	)
 }

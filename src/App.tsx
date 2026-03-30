@@ -2,17 +2,24 @@ import './App.scss'
 
 import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons'
 import { Button, Layout, theme } from 'antd'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import MyMenu from './components/MyMenu'
 import { AppRoutes } from './routes/routes'
+import { useAppDispatch } from './hooks'
+import { restoreSessionThunk } from './store/slice/auth'
 
 const { Header, Sider, Content } = Layout
 
 const App: React.FC = () => {
+	const dispatch = useAppDispatch()
 	const [collapsed, setCollapsed] = useState(false)
 	const {
 		token: { colorBgContainer, borderRadiusLG },
 	} = theme.useToken()
+
+	useEffect(() => {
+		dispatch(restoreSessionThunk())
+	}, [dispatch])
 
 	return (
 		<Layout style={{ height: '100vh' }}>
