@@ -1,4 +1,4 @@
-import type { AuthUser, LoginCredentials } from '../types/auth'
+import type { AuthUser, LoginCredentials, RegistrationFormValues } from '../types/auth'
 
 const TOKEN_KEY = 'crm_auth_token'
 const USER_KEY = 'crm_auth_user'
@@ -72,5 +72,26 @@ export async function logout(): Promise<void> {
 	await delay(100)
 	localStorage.removeItem(TOKEN_KEY)
 	localStorage.removeItem(USER_KEY)
+}
+
+export async function signup(values: RegistrationFormValues): Promise<void> {
+	await delay(400)
+
+	const loginId = values.login.trim()
+	const username = values.username.trim()
+	const email = values.email.trim().toLowerCase()
+
+	if (!loginId || loginId.length < 2) {
+		throw new Error('Введите логин')
+	}
+	if (!username) {
+		throw new Error('Введите имя пользователя')
+	}
+	if (!email || !email.includes('@')) {
+		throw new Error('Введите корректный email')
+	}
+	if (values.password !== values.passwordConfirm) {
+		throw new Error('Пароль и подтверждение должны совпадать')
+	}
 }
 

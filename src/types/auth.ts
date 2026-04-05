@@ -9,3 +9,12 @@ export type LoginCredentials = {
 	password: string
 }
 
+export type RegistrationFormValues = {
+	login: string
+	username: string
+	password: string
+	passwordConfirm: string
+	email: string
+	phoneNumber?: string
+}
+
