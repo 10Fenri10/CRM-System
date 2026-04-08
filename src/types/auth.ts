@@ -1,20 +1,63 @@
-export type AuthUser = {
-	id: string
-	email: string
-	name: string
-}
+// export type AuthUser = {
+// 	id: string
+// 	email: string
+// 	name: string
+// }
 
-export type LoginCredentials = {
-	email: string
-	password: string
-}
+// export type LoginCredentials = {
+// 	email: string
+// 	password: string
+// }
 
-export type RegistrationFormValues = {
+// export type RegistrationFormValues = {
+// 	login: string
+// 	username: string
+// 	password: string
+// 	passwordConfirm: string
+// 	email: string
+// 	phoneNumber?: string
+// }
+
+export interface UserRegistration {
 	login: string
 	username: string
 	password: string
-	passwordConfirm: string
 	email: string
-	phoneNumber?: string
+	phoneNumber: string
 }
 
+export interface AuthData {
+	login: string
+	password: string
+}
+
+export interface RefreshToken {
+	refreshToken: string
+}
+
+export interface Profile {
+	id: number
+	username: string
+	email: string
+	date: string
+	isBlocked: boolean
+	roles: Role[]
+	phoneNumber: string
+}
+
+export interface ProfileRequest {
+	username: string
+	email: string
+	phoneNumber: string
+}
+
+export interface PasswordRequest {
+	password: string
+}
+
+export interface Token {
+	accessToken: string
+	refreshToken: string
+}
+
+export type Role = 'ADMIN' | 'USER' | 'MODERATOR'

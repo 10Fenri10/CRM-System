@@ -3,35 +3,9 @@ import React, { useEffect, useState } from 'react'
 import { Link as RouterLink, useNavigate } from 'react-router'
 import { useAppDispatch, useAuth } from '../../hooks'
 import { loginThunk } from '../../store/slice/auth'
-import type { LoginCredentials } from '../../types/auth'
+import { type AuthData } from '../../types/auth'
 
 import './login.scss'
-
-// function AuthMarkLogo() {
-// 	return (
-// 		<svg
-// 			className='login-page__logo'
-// 			viewBox='0 0 40 40'
-// 			fill='none'
-// 			xmlns='http://www.w3.org/2000/svg'
-// 			aria-hidden
-// 		>
-// 			<path
-// 				d='M20 4v32M4 20h32'
-// 				stroke='currentColor'
-// 				strokeWidth='2.5'
-// 				strokeLinecap='round'
-// 			/>
-// 			<path
-// 				d='M10 10l20 20M30 10L10 30'
-// 				stroke='currentColor'
-// 				strokeWidth='2.5'
-// 				strokeLinecap='round'
-// 				opacity='0.45'
-// 			/>
-// 		</svg>
-// 	)
-// }
 
 import logo from '../../assets/Group 1686550876.svg'
 export const LoginPage: React.FC = () => {
@@ -47,9 +21,7 @@ export const LoginPage: React.FC = () => {
 		}
 	}, [isLogged, navigate, status])
 
-	const onFinish = async (
-		values: LoginCredentials & { remember?: boolean },
-	) => {
+	const onFinish = async (values: AuthData & { remember?: boolean }) => {
 		setError(null)
 		try {
 			await dispatch(loginThunk(values)).unwrap()
@@ -68,39 +40,30 @@ export const LoginPage: React.FC = () => {
 				See what is going on with your business
 			</p>
 
-			<Form<LoginCredentials & { remember?: boolean }>
+			<Form<AuthData & { remember?: boolean }>
 				layout='vertical'
 				onFinish={onFinish}
 				requiredMark={false}
 				initialValues={{ remember: true }}
 			>
-				<Form.Item<LoginCredentials>
-					label='Email'
-					name='email'
+				<Form.Item<AuthData>
+					label='login'
+					name='login'
 					rules={[
-						{ required: true, message: 'Please enter your email' },
-						{ type: 'email', message: 'Enter a valid email' },
+						{ required: true, message: 'Please enter your login' },
+						{ type: 'string', message: 'Enter a valid login' },
 					]}
 				>
-					<Input size='large' placeholder='mail@abc.com' autoComplete='email' />
+					<Input size='large' placeholder='Buba777' />
 				</Form.Item>
 
-				<Form.Item<LoginCredentials>
+				<Form.Item<AuthData>
 					label='Password'
 					name='password'
 					rules={[{ required: true, message: 'Please enter your password' }]}
 				>
 					<Input.Password size='large' autoComplete='current-password' />
 				</Form.Item>
-
-				<div className='login-page__row'>
-					<Form.Item name='remember' valuePropName='checked' noStyle>
-						<Checkbox className='login-page__checkbox'>Remember Me</Checkbox>
-					</Form.Item>
-					<a className='login-page__forgot' href='#forgot-password'>
-						Forgot Password?
-					</a>
-				</div>
 
 				{error ? <div className='login-page__error'>{error}</div> : null}
 
@@ -115,6 +78,14 @@ export const LoginPage: React.FC = () => {
 					</Button>
 				</Form.Item>
 			</Form>
+
+			<div className='login-page__row'>
+				<Checkbox className='login-page__checkbox'>Remember Me</Checkbox>
+
+				<a className='login-page__forgot' href='#forgot-password'>
+					Forgot Password?
+				</a>
+			</div>
 
 			<div className='login-page__footer'>
 				Not Registered Yet?{' '}

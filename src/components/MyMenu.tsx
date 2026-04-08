@@ -1,8 +1,12 @@
-import { LogoutOutlined, UnorderedListOutlined, UserOutlined } from '@ant-design/icons'
+import {
+	LogoutOutlined,
+	UnorderedListOutlined,
+	UserOutlined,
+} from '@ant-design/icons'
 import { Menu } from 'antd'
 import React from 'react'
 import { useLocation, useNavigate } from 'react-router'
-import { useAuth, useAppDispatch } from '../hooks'
+import { useAppDispatch, useAuth } from '../hooks'
 import { logoutThunk } from '../store/slice/auth'
 
 const MyMenu: React.FC = () => {

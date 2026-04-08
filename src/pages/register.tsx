@@ -1,8 +1,8 @@
 import { Alert, Button, Card, Form, Input, Typography } from 'antd'
 import React, { useState } from 'react'
 import { Link } from 'react-router'
-import { signup } from '../api/authApi'
-import type { RegistrationFormValues } from '../types/auth'
+import { registration } from '../api/authApi'
+import type { UserRegistration } from '../types/auth'
 
 const { Text, Paragraph } = Typography
 
@@ -11,28 +11,28 @@ function validateOptionalPhone(_: unknown, value: string | undefined) {
 		return Promise.resolve()
 	}
 	const digits = value.replace(/\D/g, '')
-	if (digits.length < 10 || digits.length > 15) {
-		return Promise.reject(new Error('Введите корректный номер телефона'))
+
+	if (!/^\+?\d{10,15}$/.test(digits)) {
+		return Promise.reject(new Error('Формат телефона: c + и 10-15 цифр'))
 	}
 	return Promise.resolve()
 }
 
 export const RegisterPage: React.FC = () => {
-	const [form] = Form.useForm<RegistrationFormValues>()
+	const [form] = Form.useForm<UserRegistration>()
 	const [error, setError] = useState<string | null>(null)
 	const [success, setSuccess] = useState(false)
 	const [loading, setLoading] = useState(false)
 
-	const onFinish = async (values: RegistrationFormValues) => {
+	const onFinish = async (values: UserRegistration) => {
 		setError(null)
 		setSuccess(false)
 		setLoading(true)
 		try {
-			await signup({
+			await registration({
 				login: values.login.trim(),
 				username: values.username.trim(),
 				password: values.password,
-				passwordConfirm: values.passwordConfirm,
 				email: values.email.trim(),
 				phoneNumber: values.phoneNumber?.trim() ?? '',
 			})
@@ -62,13 +62,13 @@ export const RegisterPage: React.FC = () => {
 					</Paragraph>
 				</>
 			) : (
-				<Form<RegistrationFormValues>
+				<Form<UserRegistration>
 					form={form}
 					layout='vertical'
 					onFinish={onFinish}
 					requiredMark={false}
 				>
-					<Form.Item<RegistrationFormValues>
+					<Form.Item<UserRegistration>
 						label='Имя пользователя'
 						name='username'
 						rules={[
@@ -97,7 +97,7 @@ export const RegisterPage: React.FC = () => {
 						<Input autoComplete='name' />
 					</Form.Item>
 
-					<Form.Item<RegistrationFormValues>
+					<Form.Item<UserRegistration>
 						label='Логин'
 						name='login'
 						rules={[
@@ -111,7 +111,7 @@ export const RegisterPage: React.FC = () => {
 						<Input autoComplete='username' />
 					</Form.Item>
 
-					<Form.Item<RegistrationFormValues>
+					<Form.Item<UserRegistration>
 						label='Пароль'
 						name='password'
 						rules={[
@@ -122,9 +122,9 @@ export const RegisterPage: React.FC = () => {
 						<Input.Password autoComplete='new-password' />
 					</Form.Item>
 
-					<Form.Item<RegistrationFormValues>
+					<Form.Item
 						label='Повторите пароль'
-						name='passwordConfirm'
+						name='secondPassword'
 						dependencies={['password']}
 						rules={[
 							{ required: true, message: 'Подтвердите пароль' },
@@ -143,7 +143,7 @@ export const RegisterPage: React.FC = () => {
 						<Input.Password autoComplete='new-password' />
 					</Form.Item>
 
-					<Form.Item<RegistrationFormValues>
+					<Form.Item<UserRegistration>
 						label='Почтовый адрес'
 						name='email'
 						rules={[
@@ -154,7 +154,7 @@ export const RegisterPage: React.FC = () => {
 						<Input autoComplete='email' />
 					</Form.Item>
 
-					<Form.Item<RegistrationFormValues>
+					<Form.Item<UserRegistration>
 						label='Телефон'
 						name='phoneNumber'
 						rules={[{ validator: validateOptionalPhone }]}

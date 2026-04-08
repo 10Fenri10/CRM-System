@@ -1,13 +1,12 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
-import type { AuthResponse } from '../../../api/authApi'
 import * as authApi from '../../../api/authApi'
-import type { AuthUser, LoginCredentials } from '../../../types/auth'
+import type { AuthData } from '../../../types/auth'
 
 type AuthStatus = 'checking' | 'authenticated' | 'unauthenticated' | 'loading' | 'failed'
 
 type AuthState = {
-	user: AuthUser | null
-	token: string | null
+	user: null
+	accessToken: string | null
 	isLogged: boolean
 	status: AuthStatus
 	error: string | null
@@ -15,15 +14,15 @@ type AuthState = {
 
 const initialState: AuthState = {
 	user: null,
-	token: null,
+	accessToken: null,
 	isLogged: false,
 	status: 'checking',
 	error: null,
 }
 
 export const loginThunk = createAsyncThunk<
-	AuthResponse,
-	LoginCredentials,
+	{ accessToken: string; refreshToken: string },
+	AuthData,
 	{ rejectValue: string }
 >('auth/login', async (credentials, { rejectWithValue }) => {
 	try {
@@ -34,7 +33,7 @@ export const loginThunk = createAsyncThunk<
 })
 
 export const restoreSessionThunk = createAsyncThunk<
-	AuthResponse,
+	{ accessToken: string; refreshToken: string },
 	void,
 	{ rejectValue: string }
 >('auth/restoreSession', async (_, { rejectWithValue }) => {
@@ -64,7 +63,7 @@ export const authSlice = createSlice({
 	reducers: {
 		logout(state) {
 			state.user = null
-			state.token = null
+			state.accessToken = null
 			state.isLogged = false
 			state.status = 'unauthenticated'
 			state.error = null
@@ -78,15 +77,15 @@ export const authSlice = createSlice({
 			})
 			.addCase(loginThunk.fulfilled, (state, action) => {
 				state.status = 'authenticated'
-				state.user = action.payload.user
-				state.token = action.payload.token
+				state.user = null
+				state.accessToken = action.payload.accessToken
 				state.isLogged = true
 				state.error = null
 			})
 			.addCase(loginThunk.rejected, (state, action) => {
 				state.status = 'failed'
 				state.user = null
-				state.token = null
+				state.accessToken = null
 				state.isLogged = false
 				state.error = action.payload ?? 'Ошибка входа'
 			})
@@ -95,21 +94,21 @@ export const authSlice = createSlice({
 			})
 			.addCase(restoreSessionThunk.fulfilled, (state, action) => {
 				state.status = 'authenticated'
-				state.user = action.payload.user
-				state.token = action.payload.token
+				state.user = null
+				state.accessToken = action.payload.accessToken
 				state.isLogged = true
 				state.error = null
 			})
 			.addCase(restoreSessionThunk.rejected, state => {
 				state.status = 'unauthenticated'
 				state.user = null
-				state.token = null
+				state.accessToken = null
 				state.isLogged = false
 				state.error = null
 			})
 			.addCase(logoutThunk.fulfilled, state => {
 				state.user = null
-				state.token = null
+				state.accessToken = null
 				state.isLogged = false
 				state.status = 'unauthenticated'
 				state.error = null
