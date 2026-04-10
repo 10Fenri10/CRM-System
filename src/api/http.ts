@@ -1,14 +1,14 @@
 import axios, { InternalAxiosRequestConfig } from 'axios'
 import { emitAuthLogoutEvent } from './authEvents'
 import { forceLogout, refreshTokens } from './authApi'
-import { getAccessToken } from './tokenStorage'
+import { getAccessTokenMemory, setAccessTokenMemory } from './accessTokenMemory'
 
 const api = axios.create({
 	baseURL: 'https://easydev.club/api/v1',
 })
 
 api.interceptors.request.use(config => {
-	const token = getAccessToken()
+	const token = getAccessTokenMemory()
 	if (token) {
 		config.headers.Authorization = `Bearer ${token}`
 	}
@@ -34,6 +34,7 @@ api.interceptors.response.use(
 
 		try {
 			const tokens = await refreshTokens()
+			setAccessTokenMemory(tokens.accessToken)
 			originalRequest.headers.set('Authorization', `Bearer ${tokens.accessToken}`)
 			return api(originalRequest)
 		} catch (refreshError) {
