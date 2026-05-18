@@ -11,7 +11,7 @@ import { logoutThunk } from '../store/slice/auth'
 
 const MyMenu: React.FC = () => {
 	const dispatch = useAppDispatch()
-	const { isLogged } = useAuth()
+	const { isAuthorized } = useAuth()
 	const navigate = useNavigate()
 	const location = useLocation()
 
@@ -20,7 +20,7 @@ const MyMenu: React.FC = () => {
 	}
 
 	const selectedKeys = (() => {
-		if (!isLogged) return location.pathname === '/login' ? ['login'] : []
+		if (!isAuthorized) return location.pathname === '/login' ? ['login'] : []
 		if (location.pathname === '/my-profile') return ['profile']
 		return location.pathname === '/' ? ['tasks'] : []
 	})()
@@ -39,7 +39,7 @@ const MyMenu: React.FC = () => {
 			mode='inline'
 			selectedKeys={selectedKeys}
 			items={
-				isLogged
+				isAuthorized
 					? [
 							{
 								key: 'profile',

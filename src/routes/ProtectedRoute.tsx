@@ -7,16 +7,15 @@ type ProtectedRouteProps = {
 }
 
 export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-	const { isLogged, status } = useAuth()
+	const { isAuthorized, status } = useAuth()
 
 	if (status === 'checking') {
 		return <div>Загрузка...</div>
 	}
 
-	if (!isLogged) {
+	if (!isAuthorized) {
 		return <Navigate to='/login' replace />
 	}
 
 	return children
 }
-

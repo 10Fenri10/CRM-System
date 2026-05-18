@@ -7,13 +7,13 @@ type GuestRouteProps = {
 }
 
 export const GuestRoute: React.FC<GuestRouteProps> = ({ children }) => {
-	const { isLogged, status } = useAuth()
+	const { isAuthorized, status } = useAuth()
 
 	if (status === 'checking') {
 		return <div style={{ textAlign: 'center', padding: 48 }}>Загрузка...</div>
 	}
 
-	if (isLogged) {
+	if (isAuthorized) {
 		return <Navigate to='/' replace />
 	}
 

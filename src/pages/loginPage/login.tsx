@@ -11,15 +11,15 @@ import logo from '../../assets/Group 1686550876.svg'
 export const LoginPage: React.FC = () => {
 	const dispatch = useAppDispatch()
 	const navigate = useNavigate()
-	const { isLogged, status } = useAuth()
+	const { isAuthorized, status } = useAuth()
 
 	const [error, setError] = useState<string | null>(null)
 
 	useEffect(() => {
-		if (status === 'authenticated' && isLogged) {
+		if (status === 'authenticated' && isAuthorized) {
 			navigate('/')
 		}
-	}, [isLogged, navigate, status])
+	}, [isAuthorized, navigate, status])
 
 	const onFinish = async (values: AuthData & { remember?: boolean }) => {
 		setError(null)
