@@ -7,7 +7,7 @@ import { type AuthData } from '../../types/auth'
 
 import './login.scss'
 
-import logo from '../../assets/Group 1686550876.svg'
+import logo from '../../assets/logo.svg'
 export const LoginPage: React.FC = () => {
 	const dispatch = useAppDispatch()
 	const navigate = useNavigate()

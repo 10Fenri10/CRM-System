@@ -1,14 +1,14 @@
 import axios, { InternalAxiosRequestConfig } from 'axios'
-import { emitAuthLogoutEvent } from './authEvents'
+import { tokenManager } from './accessToken'
 import { forceLogout, refreshTokens } from './authApi'
-import { getAccessTokenMemory, setAccessTokenMemory } from './accessTokenMemory'
+import { emitAuthLogoutEvent } from './authEvents'
 
 const api = axios.create({
 	baseURL: 'https://easydev.club/api/v1',
 })
 
 api.interceptors.request.use(config => {
-	const token = getAccessTokenMemory()
+	const token = tokenManager.get()
 	if (token) {
 		config.headers.Authorization = `Bearer ${token}`
 	}
@@ -26,7 +26,12 @@ api.interceptors.response.use(
 		const status = error?.response?.status as number | undefined
 		const isRefreshCall = (originalRequest?.url ?? '').includes('/auth/refresh')
 
-		if (status !== 401 || !originalRequest || originalRequest._retry || isRefreshCall) {
+		if (
+			status !== 401 ||
+			!originalRequest ||
+			originalRequest._retry ||
+			isRefreshCall
+		) {
 			return Promise.reject(error)
 		}
 
@@ -34,8 +39,11 @@ api.interceptors.response.use(
 
 		try {
 			const tokens = await refreshTokens()
-			setAccessTokenMemory(tokens.accessToken)
-			originalRequest.headers.set('Authorization', `Bearer ${tokens.accessToken}`)
+			tokenManager.set(tokens.accessToken)
+			originalRequest.headers.set(
+				'Authorization',
+				`Bearer ${tokens.accessToken}`,
+			)
 			return api(originalRequest)
 		} catch (refreshError) {
 			forceLogout()

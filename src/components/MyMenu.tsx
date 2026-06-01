@@ -19,10 +19,20 @@ const MyMenu: React.FC = () => {
 		navigate(to)
 	}
 
+	const menuItems = [
+		{ key: 'tasks', path: '/' },
+		{ key: 'profile', path: '/my-profile' },
+		{ key: 'login', path: '/login' },
+	]
+
 	const selectedKeys = (() => {
-		if (!isAuthorized) return location.pathname === '/login' ? ['login'] : []
-		if (location.pathname === '/my-profile') return ['profile']
-		return location.pathname === '/' ? ['tasks'] : []
+		if (!isAuthorized) {
+			return location.pathname === '/login' ? ['login'] : []
+		}
+
+		const activeItem = menuItems.find(item => item.path === location.pathname)
+
+		return activeItem ? [activeItem.key] : []
 	})()
 
 	const handleLogout = async () => {

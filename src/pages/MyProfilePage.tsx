@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { getProfile } from '../api/profileApi'
 import { useAuth } from '../hooks'
 import { Profile } from '../types/auth'
 
-export const MyProfile: React.FC = () => {
+export const MyProfilePage: React.FC = () => {
 	const { isAuthorized } = useAuth()
 	const [profileData, setProfileData] = useState<Profile | null>(null)
 	const [isLoading, setIsLoading] = useState(false)

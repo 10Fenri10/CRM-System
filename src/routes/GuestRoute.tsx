@@ -1,12 +1,8 @@
-import React from 'react'
+import React, { PropsWithChildren } from 'react'
 import { Navigate } from 'react-router'
 import { useAuth } from '../hooks'
 
-type GuestRouteProps = {
-	children: React.ReactElement
-}
-
-export const GuestRoute: React.FC<GuestRouteProps> = ({ children }) => {
+export const GuestRoute: React.FC<PropsWithChildren> = ({ children }) => {
 	const { isAuthorized, status } = useAuth()
 
 	if (status === 'checking') {

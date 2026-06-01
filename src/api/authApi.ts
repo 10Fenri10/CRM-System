@@ -1,4 +1,4 @@
-import { setAccessTokenMemory } from './accessTokenMemory'
+import { tokenManager } from './accessToken'
 import api from './http'
 import { clearTokens, getRefreshToken, setTokens } from './tokenStorage'
 
@@ -6,12 +6,12 @@ import { AuthData, RefreshToken, Token, UserRegistration } from '../types/auth'
 
 export async function login(data: AuthData): Promise<Token> {
 	const response = await api.post('/auth/signin', data)
-	setAccessTokenMemory(response.data.accessToken)
+	tokenManager.set(response.data.accessToken)
 	setTokens(response.data.refreshToken)
 	return response.data
 }
 
-export async function registration(data: UserRegistration): Promise<Token> {
+export async function singUp(data: UserRegistration): Promise<Token> {
 	const response = await api.post('/auth/signup', data)
 	return response.data
 }
@@ -23,25 +23,21 @@ export async function refreshTokens(payload?: RefreshToken): Promise<Token> {
 	}
 
 	const response = await api.post('/auth/refresh', { refreshToken })
-	setAccessTokenMemory(response.data.accessToken)
+	tokenManager.set(response.data.accessToken)
 	setTokens(response.data.refreshToken)
 	return response.data
-}
-
-export async function restoreSession(): Promise<Token> {
-	return refreshTokens()
 }
 
 export async function logout(): Promise<void> {
 	try {
 		await api.post('/user/logout')
 	} finally {
-		setAccessTokenMemory(null)
+		tokenManager.set(null)
 		clearTokens()
 	}
 }
 
 export function forceLogout(): void {
-	setAccessTokenMemory(null)
+	tokenManager.set(null)
 	clearTokens()
 }

@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
+import { tokenManager } from '../../../api/accessToken'
 import * as authApi from '../../../api/authApi'
 import type { AuthData } from '../../../types/auth'
 
@@ -11,7 +12,7 @@ type AuthStatus =
 
 type AuthState = {
 	user: null
-	accessToken: string | null
+
 	isAuthorized: boolean
 	status: AuthStatus
 	error: string | null
@@ -19,7 +20,6 @@ type AuthState = {
 
 const initialState: AuthState = {
 	user: null,
-	accessToken: null,
 	isAuthorized: false,
 	status: 'checking',
 	error: null,
@@ -44,7 +44,7 @@ export const restoreSessionThunk = createAsyncThunk<
 >('auth/restoreSession', async (_, { rejectWithValue }) => {
 	try {
 		void _
-		return await authApi.restoreSession()
+		return await authApi.refreshTokens()
 	} catch (e) {
 		return rejectWithValue(e instanceof Error ? e.message : 'Session error')
 	}
@@ -69,7 +69,7 @@ export const authSlice = createSlice({
 	reducers: {
 		logout(state) {
 			state.user = null
-			state.accessToken = null
+			tokenManager.set(null)
 			state.isAuthorized = false
 			state.status = 'unauthenticated'
 			state.error = null
@@ -84,14 +84,14 @@ export const authSlice = createSlice({
 			.addCase(loginThunk.fulfilled, (state, action) => {
 				state.status = 'authenticated'
 				state.user = null
-				state.accessToken = action.payload.accessToken
+				tokenManager.set(action.payload.accessToken)
 				state.isAuthorized = true
 				state.error = null
 			})
 			.addCase(loginThunk.rejected, (state, action) => {
 				state.status = 'failed'
 				state.user = null
-				state.accessToken = null
+				tokenManager.set(null)
 				state.isAuthorized = false
 				state.error = action.payload ?? 'Ошибка входа'
 			})
@@ -101,20 +101,20 @@ export const authSlice = createSlice({
 			.addCase(restoreSessionThunk.fulfilled, (state, action) => {
 				state.status = 'authenticated'
 				state.user = null
-				state.accessToken = action.payload.accessToken
+				tokenManager.set(action.payload.accessToken)
 				state.isAuthorized = true
 				state.error = null
 			})
 			.addCase(restoreSessionThunk.rejected, state => {
 				state.status = 'unauthenticated'
 				state.user = null
-				state.accessToken = null
+				tokenManager.set(null)
 				state.isAuthorized = false
 				state.error = null
 			})
 			.addCase(logoutThunk.fulfilled, state => {
 				state.user = null
-				state.accessToken = null
+				tokenManager.set(null)
 				state.isAuthorized = false
 				state.status = 'unauthenticated'
 				state.error = null

@@ -7,14 +7,14 @@ import MyMenu from '../components/MyMenu'
 const { Header, Sider, Content } = Layout
 
 export const MainLayout: React.FC = () => {
-	const [collapsed, setCollapsed] = useState(false)
+	const [isCollapsed, setIsCollapsed] = useState<boolean>(false)
 	const {
 		token: { colorBgContainer, borderRadiusLG },
 	} = theme.useToken()
 
 	return (
 		<Layout style={{ height: '100vh' }}>
-			<Sider trigger={null} collapsible collapsed={collapsed}>
+			<Sider trigger={null} collapsible collapsed={isCollapsed}>
 				<div className='demo-logo-vertical' />
 				<MyMenu />
 			</Sider>
@@ -22,8 +22,8 @@ export const MainLayout: React.FC = () => {
 				<Header style={{ padding: 0, background: colorBgContainer }}>
 					<Button
 						type='text'
-						icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-						onClick={() => setCollapsed(!collapsed)}
+						icon={isCollapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+						onClick={() => setIsCollapsed(!isCollapsed)}
 						style={{
 							fontSize: '16px',
 							width: 64,

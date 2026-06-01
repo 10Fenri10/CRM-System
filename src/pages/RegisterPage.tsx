@@ -1,7 +1,7 @@
 import { Alert, Button, Card, Form, Input, Typography } from 'antd'
 import React, { useState } from 'react'
 import { Link } from 'react-router'
-import { registration } from '../api/authApi'
+import { singUp } from '../api/authApi'
 import type { UserRegistration } from '../types/auth'
 
 const { Text, Paragraph } = Typography
@@ -21,33 +21,33 @@ function validateOptionalPhone(_: unknown, value: string | undefined) {
 export const RegisterPage: React.FC = () => {
 	const [form] = Form.useForm<UserRegistration>()
 	const [error, setError] = useState<string | null>(null)
-	const [success, setSuccess] = useState(false)
-	const [loading, setLoading] = useState(false)
+	const [isSuccess, setIsSuccess] = useState<boolean>(false)
+	const [isLoading, setIsLoading] = useState<boolean>(false)
 
 	const onFinish = async (values: UserRegistration) => {
 		setError(null)
-		setSuccess(false)
-		setLoading(true)
+		setIsSuccess(false)
+		setIsLoading(true)
 		try {
-			await registration({
+			await singUp({
 				login: values.login.trim(),
 				username: values.username.trim(),
 				password: values.password,
 				email: values.email.trim(),
 				phoneNumber: values.phoneNumber?.trim() ?? '',
 			})
-			setSuccess(true)
+			setIsSuccess(true)
 			form.resetFields()
 		} catch (e) {
 			setError(e instanceof Error ? e.message : 'Ошибка регистрации')
 		} finally {
-			setLoading(false)
+			setIsLoading(false)
 		}
 	}
 
 	return (
 		<Card title='Регистрация' style={{ width: '100%', maxWidth: 480 }}>
-			{success ? (
+			{isSuccess ? (
 				<>
 					<Alert
 						type='success'
@@ -79,9 +79,7 @@ export const RegisterPage: React.FC = () => {
 										return Promise.reject(new Error('Введите имя пользователя'))
 									}
 									const v = value.trim()
-									if (v.length > 60) {
-										return Promise.reject(new Error('Не более 60 символов'))
-									}
+
 									if (!/^[\p{L}\s\-]{1,60}$/u.test(v)) {
 										return Promise.reject(
 											new Error(
@@ -167,7 +165,7 @@ export const RegisterPage: React.FC = () => {
 					) : null}
 
 					<Form.Item>
-						<Button type='primary' htmlType='submit' block loading={loading}>
+						<Button type='primary' htmlType='submit' block loading={isLoading}>
 							Зарегистрироваться
 						</Button>
 					</Form.Item>

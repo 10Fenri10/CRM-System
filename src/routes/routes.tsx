@@ -2,9 +2,9 @@ import { Navigate, Route, Routes } from 'react-router'
 
 import { AuthLayout } from '../layouts/AuthLayout'
 import { MainLayout } from '../layouts/MainLayout'
-import { LoginPage } from '../pages/loginPage/login'
-import { MyProfile } from '../pages/my-profile'
-import { RegisterPage } from '../pages/register'
+import { LoginPage } from '../pages/loginPage/LoginPage'
+import { MyProfilePage } from '../pages/MyProfilePage'
+import { RegisterPage } from '../pages/RegisterPage'
 import { TodoListPage } from '../pages/todoListPage/TodoListPage'
 import { GuestRoute } from './GuestRoute'
 import { ProtectedRoute } from './ProtectedRoute'
@@ -35,7 +35,7 @@ export const AppRoutes = () => {
 					path='/my-profile'
 					element={
 						<ProtectedRoute>
-							<MyProfile />
+							<MyProfilePage />
 						</ProtectedRoute>
 					}
 				/>
