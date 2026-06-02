@@ -1,18 +1,54 @@
-import { Route, Routes } from 'react-router'
+import { Navigate, Route, Routes } from 'react-router'
 
-import { MyProfile } from '../pages/my-profile'
+import { AuthLayout } from '../layouts/AuthLayout'
+import { MainLayout } from '../layouts/MainLayout'
+import { LoginPage } from '../pages/loginPage/LoginPage'
+import { MyProfilePage } from '../pages/MyProfilePage'
+import { RegisterPage } from '../pages/RegisterPage'
 import { TodoListPage } from '../pages/todoListPage/TodoListPage'
+import { GuestRoute } from './GuestRoute'
+import { ProtectedRoute } from './ProtectedRoute'
 
 export const AppRoutes = () => {
-	const navigationRoutes = [
-		{ path: '/my-profile', element: <MyProfile /> },
-		{ path: '/', element: <TodoListPage /> },
-	]
 	return (
 		<Routes>
-			{navigationRoutes.map(route => (
-				<Route key={route.path} path={route.path} element={route.element} />
-			))}
+			<Route element={<AuthLayout />}>
+				<Route
+					path='/login'
+					element={
+						<GuestRoute>
+							<LoginPage />
+						</GuestRoute>
+					}
+				/>
+				<Route
+					path='/register'
+					element={
+						<GuestRoute>
+							<RegisterPage />
+						</GuestRoute>
+					}
+				/>
+			</Route>
+			<Route element={<MainLayout />}>
+				<Route
+					path='/my-profile'
+					element={
+						<ProtectedRoute>
+							<MyProfilePage />
+						</ProtectedRoute>
+					}
+				/>
+				<Route
+					path='/'
+					element={
+						<ProtectedRoute>
+							<TodoListPage />
+						</ProtectedRoute>
+					}
+				/>
+			</Route>
+			<Route path='*' element={<Navigate to='/' replace />} />
 		</Routes>
 	)
 }

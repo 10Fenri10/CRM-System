@@ -1,0 +1,93 @@
+.login-page {
+	&__logo {
+		width: 72px;
+		height: 72px;
+		margin-bottom: 2.25rem;
+		color: #7f265b;
+	}
+
+	&__title {
+		margin: 0 0 0.5rem;
+		font-size: 36px;
+		font-weight: 700;
+		color: #525252;
+		text-align: center;
+		line-height: 1.2;
+	}
+
+	&__subtitle {
+		margin: 0 0 2rem;
+		font-size: 16px;
+		font-weight: 400;
+		color: #525252;
+		line-height: 1.5;
+		text-align: center;
+	}
+
+	&__row {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		margin-bottom: 1.5rem;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+	}
+
+	&__forgot {
+		color: #7f265b;
+		font-size: 0.875rem;
+		font-weight: 500;
+
+		&:hover {
+			color: #5c1b42;
+		}
+	}
+
+	&__submit.ant-btn {
+		height: 48px;
+		font-weight: 600;
+		font-size: 1rem;
+		border-radius: 8px;
+		background-color: #7f265b;
+	}
+
+	&__footer {
+		margin-top: 1.75rem;
+		text-align: center;
+		font-size: 0.9375rem;
+		color: #6b6b7b;
+	}
+
+	&__checkbox {
+		margin-top: 8px;
+		color: #828282;
+		font-size: 14px;
+	}
+
+	&__footer-link {
+		color: #7f265b;
+		font-weight: 600;
+
+		&:hover {
+			color: #5c1b42;
+		}
+	}
+
+	&__error {
+		color: #b00020;
+		margin-bottom: 12px;
+		font-size: 0.875rem;
+	}
+
+	.ant-form-item-label > label {
+		color: #828282;
+		font-weight: 600;
+		font-size: 14px;
+	}
+
+	.ant-input,
+	.ant-input-password {
+		border-radius: 8px;
+		padding: 10px 14px;
+	}
+}

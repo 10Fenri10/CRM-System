@@ -1,9 +1,6 @@
-import axios from 'axios'
 import { MetaResponse, Todo, TodoFilters, TodoInfo } from '../types/todo'
 
-const api = axios.create({
-	baseURL: 'https://easydev.club/api/v1',
-})
+import api from './http'
 
 export async function getAllTodos(
 	filter: TodoFilters['status']
